@@ -1,0 +1,278 @@
+---
+import { baseUrl } from '@/utils/functions';
+const logo = baseUrl('/assets/css-logo.svg');
+---
+
+<svg
+  xmlns='http://www.w3.org/2000/svg'
+  version='1.1'
+  width='800'
+  id='svg-filtro-cursore'
+>
+  <defs>
+    <filter id='goo'>
+      <feGaussianBlur in='SourceGraphic' stdDeviation='6' result='blur'
+      ></feGaussianBlur>
+      <feColorMatrix
+        in='blur'
+        mode='matrix'
+        values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15'
+        result='goo'></feColorMatrix>
+      <feComposite in='SourceGraphic' in2='goo' operator='atop'></feComposite>
+    </filter>
+  </defs>
+</svg>
+
+<div class='page'>
+  <div class='page-bg'>
+    <div class='noise'></div>
+  </div>
+
+  <div class='lines'>
+    <div class='line1'></div>
+    <div class='line2'></div>
+    <div class='line3'></div>
+    <div class='line4'></div>
+    <div class='line5'></div>
+  </div>
+  <div class='container'>
+    <div class='child'>
+      <div class='content'>
+        <div>
+          <div id='button' class='HoverButton'>
+            <div class='bg'></div>
+            <h1 class="center-title">20 Projects with Sass</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class='stamp'>
+    <div class='circle'>
+      <p id='circle-content'>EXPERIMENTS . EXPERIMENTS .</p>
+    </div>
+    <img src={baseUrl('/assets/sass.svg')} alt="Sass Logo" class="am-sass">
+  </div>
+</div>
+<div id='cursor' class='Cursor'></div>
+
+<script>
+  import gsap from 'gsap';
+
+  const cursor = document.getElementById('cursor') as HTMLElement;
+  const amount = 20;
+  const sineDots = Math.floor(amount * 0.3);
+  const width = 26;
+  const idleTimeout = 150;
+
+  let lastFrame = 0;
+  let mousePosition = { x: 0, y: 0 };
+  let dots: Dot[] = [];
+  let timeoutID: number;
+  let idle = false;
+  let hoverButton: HoverButton | undefined;
+
+  class HoverButton {
+    el: HTMLElement;
+    bg: HTMLElement;
+    hovered = false;
+    animatingHover = false;
+    forceOut = false;
+    timing = 0.65;
+
+    constructor(id: string) {
+      const el = document.getElementById(id);
+      if (!el) throw new Error(`Element with id ${id} not found`);
+      this.el = el;
+      const bg = el.getElementsByClassName('bg')[0] as HTMLElement;
+      if (!bg) throw new Error(`Element with class "bg" not found in ${id}`);
+      this.bg = bg;
+
+      this.el.addEventListener('mouseenter', this.onMouseEnter);
+      this.el.addEventListener('mouseleave', this.onMouseLeave);
+    }
+
+    onMouseEnter = () => this.hoverInAnim();
+
+    hoverInAnim = () => {
+      if (!this.hovered) {
+        this.hovered = true;
+        this.animatingHover = true;
+        this.forceOut = false;
+
+        gsap.fromTo(
+          this.bg,
+          { x: '-112%' },
+          {
+            x: '-12%',
+            duration: this.timing,
+            ease: 'power3.out',
+            onComplete: () => {
+              this.animatingHover = false;
+              if (this.forceOut) {
+                this.forceOut = false;
+                this.hoverOutAnim();
+              }
+            }
+          }
+        );
+      }
+    };
+
+    onMouseLeave = () => {
+      if (!this.animatingHover) {
+        this.hoverOutAnim();
+      } else {
+        this.forceOut = true;
+      }
+    };
+
+    hoverOutAnim = () => {
+      this.hovered = false;
+      gsap.to(this.bg, {
+        x: '100%',
+        duration: this.timing,
+        ease: 'power3.out'
+      });
+    };
+  }
+
+  class Dot {
+    index: number;
+    anglespeed = 0.05;
+    x = 0;
+    y = 0;
+    scale: number;
+    range: number;
+    limit: number;
+    element: HTMLSpanElement;
+    lockX = 0;
+    lockY = 0;
+    angleX = 0;
+    angleY = 0;
+
+    constructor(index: number = 0) {
+      this.index = index;
+      this.scale = 1 - 0.05 * index;
+      this.range = width / 2 - (width / 2) * this.scale + 2;
+      this.limit = width * 0.75 * this.scale;
+      this.element = document.createElement('span');
+      gsap.set(this.element, { scale: this.scale });
+      cursor.appendChild(this.element);
+    }
+
+    lock() {
+      this.lockX = this.x;
+      this.lockY = this.y;
+      this.angleX = Math.random() * Math.PI * 2;
+      this.angleY = Math.random() * Math.PI * 2;
+    }
+
+    draw(delta: number) {
+      if (!idle || this.index <= sineDots) {
+        gsap.set(this.element, { x: this.x, y: this.y });
+      } else {
+        this.angleX += this.anglespeed;
+        this.angleY += this.anglespeed;
+        this.y = this.lockY + Math.sin(this.angleY) * this.range;
+        this.x = this.lockX + Math.sin(this.angleX) * this.range;
+        gsap.set(this.element, { x: this.x, y: this.y });
+      }
+    }
+  }
+
+  class Circle {
+    constructor(id: string) {
+      const el = document.getElementById(id);
+      if (!el) throw new Error(`Element with id ${id} not found`);
+      const parent = el.parentElement!;
+      parent.removeChild(el);
+
+      const chars = el.innerText.split('');
+      chars.push(' ');
+
+      chars.forEach((char, i) => {
+        const span = document.createElement('span');
+        span.innerText = char;
+        span.className = `char${i + 1}`;
+        parent.appendChild(span);
+      });
+    }
+  }
+
+  function init() {
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('touchmove', onTouchMove);
+
+    hoverButton = new HoverButton('button');
+    new Circle('circle-content');
+
+    lastFrame = performance.now();
+    buildDots();
+    startIdleTimer();
+    requestAnimationFrame(render);
+  }
+
+  function startIdleTimer() {
+    timeoutID = window.setTimeout(goInactive, idleTimeout);
+    idle = false;
+  }
+
+  function resetIdleTimer() {
+    clearTimeout(timeoutID);
+    startIdleTimer();
+  }
+
+  function goInactive() {
+    idle = true;
+    dots.forEach(dot => dot.lock());
+  }
+
+  function buildDots() {
+    for (let i = 0; i < amount; i++) {
+      dots.push(new Dot(i));
+    }
+  }
+
+  const onMouseMove = (event: MouseEvent) => {
+    mousePosition.x = event.clientX - width / 2;
+    mousePosition.y = event.clientY - width / 2;
+    resetIdleTimer();
+  };
+
+  const onTouchMove = (event: TouchEvent) => {
+    mousePosition.x = event.touches[0].clientX - width / 2;
+    mousePosition.y = event.touches[0].clientY - width / 2;
+    resetIdleTimer();
+  };
+
+  const render = (timestamp: number) => {
+    const delta = timestamp - lastFrame;
+    positionCursor(delta);
+    lastFrame = timestamp;
+    requestAnimationFrame(render);
+  };
+
+  const positionCursor = (delta: number) => {
+    let x = mousePosition.x;
+    let y = mousePosition.y;
+
+    dots.forEach((dot, index) => {
+      const nextDot = dots[index + 1] || dots[0];
+      dot.x = x;
+      dot.y = y;
+      dot.draw(delta);
+
+      if (!idle || index <= sineDots) {
+        const dx = (nextDot.x - dot.x) * 0.35;
+        const dy = (nextDot.y - dot.y) * 0.35;
+        x += dx;
+        y += dy;
+      }
+    });
+  };
+
+  init();
+</script>
+

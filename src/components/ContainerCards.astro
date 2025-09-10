@@ -1,0 +1,295 @@
+---
+import { baseUrl } from '@/utils/functions';
+
+const arrayCards = [
+  {
+    title: 'Bubbles',
+    repo: 'https://github.com/DominicNikolai/project-239',
+    localImage: '/assets/project-239.avif',
+    id: '001'
+  },
+  {
+    title: 'Heart',
+    repo: 'https://github.com/DominicNikolai/project-241',
+    localImage: '/assets/project-241.avif',
+    id: '002'
+  },
+  {
+    title: 'Flower',
+    repo: 'https://github.com/DominicNikolai/project-243',
+    localImage: '/assets/project-243.avif',
+    id: '003'
+  },
+  {
+    title: 'Aurora Text',
+    repo: 'https://github.com/DominicNikolai/project-247',
+    localImage: '/assets/project-247.avif',
+    id: '004'
+  },
+  {
+    title: 'Hello',
+    repo: 'https://github.com/DominicNikolai/project-249',
+    localImage: '/assets/project-249.avif',
+    id: '005'
+  },
+  {
+    title: 'Serflex',
+    repo: 'https://github.com/DominicNikolai/project-253',
+    localImage: '/assets/project-253.avif',
+    id: '006'
+  },
+  {
+    title: 'Striped Cones',
+    repo: 'https://github.com/DominicNikolai/project-255',
+    localImage: '/assets/project-255.avif',
+    id: '007'
+  },
+  {
+    title: 'Pattern',
+    repo: 'https://github.com/DominicNikolai/project-257',
+    localImage: '/assets/project-257.avif',
+    id: '008'
+  },
+  {
+    title: 'Mosaico',
+    repo: 'https://github.com/DominicNikolai/project-259',
+    localImage: '/assets/project-259.avif',
+    id: '009'
+  },
+  {
+    title: 'Rainbow',
+    repo: 'https://github.com/DominicNikolai/project-261',
+    localImage: '/assets/project-261.avif',
+    id: '010'
+  },
+  {
+    title: 'Title',
+    repo: 'https://github.com/DominicNikolai/project-269',
+    localImage: '/assets/project-269.avif',
+    id: '011'
+  },
+  {
+    title: 'Chispas',
+    repo: 'https://github.com/DominicNikolai/project-266',
+    localImage: '/assets/project-266.avif',
+    id: '012'
+  },
+  {
+    title: 'Moka Port',
+    repo: 'https://github.com/DominicNikolai/project-279',
+    localImage: '/assets/project-279.avif',
+    id: '013'
+  },
+  {
+    title: 'Shorts',
+    repo: 'https://github.com/DominicNikolai/project-280',
+    localImage: '/assets/project-280.avif',
+    id: '014'
+  },
+  {
+    title: 'Mario Simple',
+    repo: 'https://github.com/20essentials/project-000-883',
+    localImage: '/assets/n883.avif',
+    id: '015'
+  },
+  {
+    title: 'Redix',
+    repo: 'https://github.com/20essentials/project-000-890',
+    localImage: '/assets/n890.avif',
+    id: '016'
+  },
+  {
+    title: 'Init',
+    repo: 'https://github.com/20essentials/project-000-730',
+    localImage: '/assets/n730.avif',
+    id: '017'
+  },
+  {
+    title: 'Diamante',
+    repo: 'https://github.com/20essentials/project-000-754',
+    localImage: '/assets/n754.avif',
+    id: '018'
+  },
+  {
+    title: 'stroke-dashoffset',
+    repo: 'https://github.com/20essentials/project-000-880',
+    localImage: '/assets/n880.avif',
+    id: '019'
+  },
+  {
+    title: 'Button Slash',
+    repo: 'https://github.com/20essentials/project-000-684',
+    localImage: '/assets/n684.avif',
+    id: '020'
+  }
+];
+---
+
+<div class='container'>
+  <div class='cards-container'>
+    {
+      arrayCards.map(({ id, localImage, repo, title }) => (
+        <div class='card' data-title={title} data-anchor={repo}>
+          <div class='card-inner'>
+            <div class='card-front'>
+              <img src={baseUrl(localImage)} alt={title} class='am-img' />
+            </div>
+            <div class='card-back'>
+              <div class='particles' />
+              <h3>{title}</h3>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  document.addEventListener('click', e => {
+    const target = e.target as HTMLElement;
+    if (target.matches('.card, .card *')) {
+      const card = target.closest('.card') as HTMLElement;
+      const repo = card ? card.getAttribute('data-anchor') : null;
+      if (repo) {
+        window.open(repo, '_blank');
+      }
+    }
+  })
+</script>
+
+<style>
+  @font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('/assets/orbitron.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+      U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+      U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  .container {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17vmax, 1fr));
+    gap: 2.08vmax;
+    padding: 2.08vmax;
+    min-height: 100vh;
+    place-items: center;
+    margin-inline: auto;
+    place-content: center;
+  }
+
+  .card {
+    min-width: 15vmax;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    position: relative;
+    perspective: 65.1vmax;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+  }
+
+  .card:hover .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front,
+  .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 1.3vmax;
+    padding: 0.2vmax;
+    box-shadow:
+      0 1.3vmax 2.6vmax rgba(0, 0, 0, 0.1),
+      0 0 0 0.07vmax rgba(255, 255, 255, 0.1);
+    border: 0.07vmax solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(1.3vmax);
+  }
+
+  .card-front {
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    img {
+      width: 90%;
+      height: 90%;
+      object-fit: cover;
+      display: flex;
+      border-radius: 1vmax;
+    }
+  }
+
+  .card-back {
+    background: rgba(0, 0, 0, 0.2);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-wrap: wrap;
+    place-content: center;
+    position: relative;
+
+    h3 {
+      font-size: 1.4vmax !important;
+      color: #eee;
+      font-family: 'Orbitron';
+    }
+  }
+
+  /* Animated backgrounds for card backs */
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        0.13vmax 0.13vmax at 1.3vmax 1.95vmax,
+        #eee,
+        transparent
+      ),
+      radial-gradient(
+        0.13vmax 0.13vmax at 2.6vmax 4.56vmax,
+        rgba(255, 255, 255, 0.8),
+        transparent
+      ),
+      radial-gradient(0.07vmax 0.07vmax at 5.86vmax 2.6vmax, #fff, transparent),
+      radial-gradient(
+        0.07vmax 0.07vmax at 8.46vmax 5.21vmax,
+        rgba(255, 255, 255, 0.6),
+        transparent
+      );
+    background-size: 9.77vmax 6.51vmax;
+    background-repeat: repeat;
+    animation: particleMove 20s linear infinite;
+    opacity: 0.3;
+  }
+
+  @keyframes particleMove {
+    0% {
+      transform: translateY(0px);
+    }
+    100% {
+      transform: translateY(-100px);
+    }
+  }
+</style>
